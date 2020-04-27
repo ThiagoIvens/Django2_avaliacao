@@ -16,33 +16,52 @@ def post_list(request):
 
 def post_detail(request, pk):
 	post = get_object_or_404(Post, pk=pk)
+	is_liked = False
+	if post.likes.filter(id=request.user.id).exists():
+		is_liked = True
+	context = {
+		'post' : post,
+		'is_liked': is_liked,
+		'total_likes': post.total_likes(),
+	}
+
 	return render(request, 'blog/post_detail.html', {'post':post})
 
 def post_new(request):
-    if request.method == "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm()
-    return render(request, 'blog/post_edit.html', {'form': form})
-    
+	if request.method == "POST":
+		form = PostForm(request.POST)
+		if form.is_valid():
+			post = form.save(commit=False)
+			post.author = request.user
+			post.published_date = timezone.now()
+			post.save()
+			return redirect('post_detail', pk=post.pk)
+	else:
+		form = PostForm()
+	return render(request, 'blog/post_edit.html', {'form': form})
+	
 def post_edit(request, pk):
-     post = get_object_or_404(Post, pk=pk)
-     if request.method == "POST":
-         form = PostForm(request.POST, instance=post)
-         if form.is_valid():
-             post = form.save(commit=False)
-             post.author = request.user
-             post.published_date = timezone.now()
-             post.save()
-             return redirect('post_detail', pk=post.pk)
-     else:
-         form = PostForm(instance=post)
-     return render(request, 'blog/post_edit.html', {'form': form})
+	post = get_object_or_404(Post, pk=pk)
+	if request.method == "POST":
+		form = PostForm(request.POST, instance=post)
+		if form.is_valid():
+			post = form.save(commit=False)
+			post.author = request.user
+			post.published_date = timezone.now()
+			post.save()
+			return redirect('post_detail', pk=post.pk)
+	else:
+		form = PostForm(instance=post)
+	return render(request, 'blog/post_edit.html', {'form': form})
 
-
+def like_post(request):
+	post = get_object_or_404(Post, id=request.POST.get('post_id'))
+	is_liked = False
+	if post.likes.filter(id=request.user.id).exists():
+		post.likes.remove(reques.user)
+		is_liked = False
+	else:
+		post.likes.add(reques.user)
+		is_liked = True
+	post.likes.add(request.user)
+	return HttpResponseRedirect(post.get_absolute_url())

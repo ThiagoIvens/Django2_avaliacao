@@ -16,9 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from blog import views
+from django.conf.urls import url
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
+
+    url(r'^like/$', views.like_post, name="like_post"),
 ]
