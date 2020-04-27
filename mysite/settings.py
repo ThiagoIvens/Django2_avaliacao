@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'blog',
-        'USER':'bloguser',
-        'PASSWORD':'sua_senha',
-        'HOST':'localhost',
-        'PORT':'3306',
+        'NAME': DB_NAME,
+        'USER':DB_USER,
+        'PASSWORD':DB_PASSWORD,
+        'HOST':DB_HOST,
+        'PORT':'',
     }
 }
 
